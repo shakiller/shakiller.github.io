@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Neucha&subset=cyrillic');
+        h1 {
+            text-align: center;
+            background: linear-gradient(brown, red);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        #log {
+            height: 500px;
+            width: 100%;
+            resize: none;
+            padding: 20px 5px 5px;
+            border: none;
+            display: block;
+            font-size: inherit;
+            color: brown;
+            box-sizing: border-box;
+            font-family: 'Neucha', cursive;
+            overflow: auto;
+            font-size: 1.4em;
+            background: transparent;
+            /*            background: linear-gradient(to right, #342aa5, red);*/
+            /*            -webkit-background-clip: text;*/
+            /*            color: transparent;*/
+        }
+
+        #enterChislo,
+        button {
+            background: transparent;
+            padding: 5px;
+            width: 100%;
+            font-size: inherit;
+            box-sizing: border-box;
+            font-family: 'Neucha', cursive;
+            font-size: 2em;
+            border: none;
+            border-radius: 5px;
+            color: brown;
+            box-shadow: inset 0 0 2px 1px brown;
+        }
+
+        #enterChislo:focus {
+            outline: none;
+            box-shadow: inset 0 0 5px 1px black;
+        }
+
+        .game {
+            margin: auto;
+            max-width: 400px;
+            background-color: antiquewhite;
+            font-family: 'Neucha', cursive;
+            padding-top: 1px;
+
+
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        #timerWindow {
+            position: absolute;
+            font-size: 0.5em;
+            padding: 0 3em;
+            color: black;
+        }
+
+    </style>
+    <script>
+        var timerId = setInterval(function() {
+            timer();
+        }, 1000);
+
+        setTimeout(function() {
+            clearInterval(timerId);
+            alert('[хватить]');
+        }, 300000);
+
+    </script>
+</head>
+
+<body>
+
+
+
+
+
+
+    <div class="game">
+        <div>
+            <h1>БЫКИ и КОРОВЫ <span id="timerWindow"></span></h1>
+            <form onsubmit=" return runScript()">
+                <input name="enterChislo" id="enterChislo" autofocus>
+                <input type="submit" value="Submit" style="display:none;">
+                <pre id="log"></pre>
+                <button onclick="show(chislo)">показать число</button>
+            </form>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+    <script>
+        var chislo = Math.floor(Math.random() * 8999) + 1000;
+        var search;
+        var log = '';
+        var timeSecond = 0;
+        var timerV = document.getElementById('timerWindow');
+
+        function time() {
+            setTimeout(timer(), 1000)
+        }
+        time();
+
+        function timer() {
+
+            timerV.textContent = timeSecond;
+            timeSecond++;
+
+        }
+
+        function runScript() {
+
+            search = parseInt(document.getElementById("enterChislo").value);
+            if (isNaN(search)) {
+                search = 0
+            };
+            if ((search > 10000) || (search < 999)) {
+                console.log('ещё разок');
+                document.getElementById("enterChislo").value = '';
+                log = log + 'ещёразок' + '\n';
+                document.getElementById('log').textContent = log;
+            } else {
+                sravnenie(chislo, search);
+                document.getElementById("enterChislo").value = '';
+
+            }
+
+            return false;
+        }
+
+        function show(chislo) {
+
+            log = log + chislo;
+            document.getElementById('log').textContent = log;
+        }
+
+        function sravnenie(chislo, search) {
+            var bik = 0;
+            var korova = 0;
+            var bikok; //окончание
+            var korovaok; //окончание
+            var proverka = function(chislo, search) {
+                chislo = chislo + '';
+                search = search + ''
+                var chisloArr = chislo.split('');
+                var searchArr = search.split('');
+                for (var i = 0; i < 4; i++) {
+                    if (chisloArr[i] === searchArr[i]) {
+                        bik++;
+                        chisloArr[i] = NaN;
+                        searchArr[i] = NaN;
+                    }
+                }
+                for (var i = 0; i < 4; i++) {
+                    for (var j = 0; j < 4; j++) {
+                        if (j == i) {
+                            continue
+                        }
+                        if (chisloArr[i] === searchArr[j]) {
+                            korova++;
+                            chisloArr[i] = NaN;
+                            searchArr[j] = NaN;
+                        }
+                    }
+                }
+                return (bik, korova);
+            }
+
+            proverka(chislo, search);
+            //окончания
+            switch (bik) {
+                case 0: // if (x === 'value1')
+                case 0:
+                    bikok = 'оff';
+                    break;
+                case 1: // if (x === 'value1')
+                case 1:
+                    bikok = '';
+                    break;
+                default:
+                    bikok = 'а';
+
+            }
+            switch (korova) {
+                case 0: // if (x === 'value1')
+                case 0:
+                    korovaok = '';
+                    break;
+                case 1: // if (x === 'value1')
+                case 1:
+                    korovaok = 'а';
+                    break;
+                default:
+                    korovaok = 'ы';
+
+            }
+            console.log('+');
+            log = log + search + '\n' + bik + ' бык' + bikok + ' ' + korova + ' коров' + korovaok + '\n';
+            document.getElementById('log').textContent = log;
+            console.log('++');
+            if (bik == 4) {
+                log = log + 'агась';
+                document.getElementById('log').textContent = log;
+            }
+            document.getElementById("log").scrollTop = document.getElementById("log").scrollHeight
+        }
+
+    </script>
+</body>
+
+</html>
